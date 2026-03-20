@@ -1,39 +1,56 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zinnah Secure Notes</title>
-    <!-- ম্যানিফেস্ট লিঙ্কটি একদম উপরে রাখুন -->
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffcc00">
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root { --primary: #ffcc00; --bg: #0d1117; --card: #161b22; --text: #c9d1d9; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box; }
         .app-container { width: 100%; max-width: 400px; background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid #30363d; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
-        .logo { font-size: 50px; color: var(--primary); margin-bottom: 15px; }
-        h1 { color: #fff; font-size: 24px; margin-bottom: 25px; }
-        textarea { width: 100%; height: 150px; background: #0d1117; color: white; border: 1px solid #30363d; border-radius: 12px; padding: 15px; font-size: 16px; outline: none; box-sizing: border-box; transition: 0.3s; }
+        .logo { font-size: 50px; color: var(--primary); margin-bottom: 10px; }
+        h1 { color: #fff; font-size: 22px; margin-bottom: 20px; }
+        textarea { width: 100%; height: 180px; background: #0d1117; color: white; border: 1px solid #30363d; border-radius: 12px; padding: 15px; font-size: 16px; outline: none; box-sizing: border-box; transition: 0.3s; resize: none; }
         textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
         .btn-group { margin-top: 20px; display: flex; gap: 10px; }
-        button { flex: 1; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        button { flex: 1; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 16px; transition: 0.2s; }
+        button:active { transform: scale(0.95); }
         button.clear { background: #f85149; color: white; }
-        .saved-box { margin-top: 25px; padding: 15px; background: #21262d; border-radius: 10px; font-size: 14px; text-align: left; border-left: 4px solid var(--primary); line-height: 1.6; }
+        .saved-box { margin-top: 25px; padding: 15px; background: #21262d; border-radius: 10px; font-size: 14px; text-align: left; border-left: 4px solid var(--primary); line-height: 1.6; min-height: 50px; word-wrap: break-word; }
     </style>
 </head>
 <body>
+
 <div class="app-container">
     <div class="logo"><i class="fas fa-feather-pointed"></i></div>
-    <h1>জিন্নাহ নোট বুক</h1>
-    <textarea id="noteInput" placeholder="আপনার নোট এখানে লিখুন..."></textarea>
+    <h1>জিন্নাহ সিকিউর নোটস</h1>
+    <textarea id="noteInput" placeholder="আপনার প্রয়োজনীয় নোট এখানে লিখুন..."></textarea>
     <div class="btn-group">
         <button onclick="saveNote()"><i class="fas fa-save"></i> সেভ করুন</button>
         <button class="clear" onclick="clearNote()"><i class="fas fa-trash"></i> মুছুন</button>
     </div>
     <div class="saved-box" id="display">সংরক্ষিত নোট এখানে দেখা যাবে...</div>
 </div>
+
 <script>
+    // ১. সার্ভিস ওয়ার্কার রেজিস্টার করা (যাতে অ্যাপটি ফোনে ইনস্টল করা যায়)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Active!'))
+                .catch(err => console.error('Registration failed!', err));
+        });
+    }
+
+    // ২. নোট লোড করা
     window.onload = function() {
         const savedData = localStorage.getItem('zinnahNote');
         if (savedData) {
@@ -41,13 +58,17 @@
             document.getElementById('noteInput').value = savedData;
         }
     }
+
+    // ৩. নোট সেভ করা
     function saveNote() {
         const note = document.getElementById('noteInput').value;
-        if(!note) return alert("কিছু লিখুন!");
+        if(!note.trim()) return alert("দয়া করে কিছু লিখুন!");
         localStorage.setItem('zinnahNote', note);
         document.getElementById('display').innerHTML = "<b>সর্বশেষ নোট:</b><br>" + note;
         alert("সফলভাবে সেভ হয়েছে!");
     }
+
+    // ৪. নোট মুছে ফেলা
     function clearNote() {
         if(confirm("আপনি কি নোটটি মুছতে চান?")) {
             localStorage.removeItem('zinnahNote');
@@ -56,6 +77,6 @@
         }
     }
 </script>
+
 </body>
 </html>
-
