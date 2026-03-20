@@ -1,9 +1,10 @@
 {
-  "name": "Zinnah Note App",
-  "short_name": "NoteApp",
+  "name": "Zinnah Secure Notes",
+  "short_name": "Z-Notes",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1877f2",
+  "background_color": "#0d1117",
+  "theme_color": "#ffcc00",
   "icons":
 }
+
